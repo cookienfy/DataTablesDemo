@@ -1,0 +1,43 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TestIndex</title>
+    <script type="text/javascript" src="~/Vendor/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/sweetalert.js"></script>
+    <script type="text/javascript" src="~/Vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/datatables/media/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/select2-4.0.3/dist/js/select2.full.min.js"></script>
+    <link rel="stylesheet" href="~/Vendor/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/datatables/media/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/Select-1.2.0/css/select.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/select2-4.0.3/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/Vendor/select2-4.0.3/dist/css/select2-bootstrap.css" />
+</head>
+<body>
+    <div> 
+
+    </div>
+<script type="text/javascript">
+
+    
+    $(document).ready(function () {
+
+        swal("Please write your score:", {
+            content: "input"
+        }).then(function (value) {
+
+            swal(value);
+        });
+    })
+
+</script>
+</body>
+</html>

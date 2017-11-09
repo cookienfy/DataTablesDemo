@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <script type="text/javascript" src="~/Vendor/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/datatables/media/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Vendor/select2-4.0.3/dist/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="~/Content/sweetalert.js"></script>
+
+
+    <link rel="stylesheet" href="~/Vendor/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/datatables/media/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/Select-1.2.0/css/select.bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Vendor/select2-4.0.3/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/Vendor/select2-4.0.3/dist/css/select2-bootstrap.css" />
+
+    <style>
+        body, button, input, select, textarea {
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        td.details-control {
+            padding: 5px 5px 5px 5px;
+            background: url('../Content/css/details_open.png') no-repeat center center;
+            cursor: pointer;
+        }
+
+
+        table.dataTable tr.group td {
+            font-weight: bold;
+            background-color: #e0e0e0;
+        }
+
+        tr.shown td.details-control {
+            padding: 5px 5px 5px 5px;
+            background: url('../Content/css/details_close.png') no-repeat center center;
+        }
+
+        tr.group,
+        tr.group:hover {
+            background-color: #ddd !important;
+        }
+
+        td.details-control-group {
+            background: url('../Content/css/details_open.png') no-repeat center left;
+        }
+
+        tr.shown td.details-control-group {
+            background: url('../Content/css/details_close.png') no-repeat center left;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>

@@ -1,0 +1,353 @@
+﻿@{
+    ViewBag.Title = "IndexExt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    td.editable {
+        font-weight: bold;
+    }
+</style>
+
+
+<div class="col-lg-8 col-lg-push-2">
+    <h5>2342342</h5>
+    <table id="table1" class="table table-striped table-bordered">
+
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    AssessmentId
+                </th>
+                <th>
+                    HDescription
+                </th>
+                <th>
+                    PermitGroupId
+                </th>
+                <th>
+                    UserId
+                </th>
+
+                <th>
+                    Area
+                </th>
+                <th>
+                    TermsId
+                </th>
+            </tr>
+
+        </thead>
+
+    </table>
+
+
+    @Html.Partial("SubGridView")
+</div>
+
+<script type="text/javascript">
+
+    var _isInitSubGrid = false;
+    var _data;
+
+    $(function () {
+
+        //$("#myModal5").modal();
+        //!!Important
+        $('#myModal5').on('shown.bs.modal', function () {
+            $(document).off('focusin.modal');
+        });
+
+        var table = $('#table1').DataTable({
+            "scrollX": false,
+            "serverSide": false,
+            "processing": true,
+            "autoWidth": false,
+            "pageLength": 10,//首次加载的数据条数
+            "ajax": {
+                "url": '@Url.Action("GetParentData", "Home")',
+                "type": 'POST',
+                "data": function (d) {
+                    //d.userId = -1;
+                    //d.IsOwn = false;
+                }
+            },
+            "columns": [
+            {
+                //"className": 'details-control',
+                "width": "50px",
+                "orderable": false,
+                "data": null,
+                "defaultContent": "<button id='btnDetail' class='btn btn-xs btn-primary' title='Detail' type='button'>Detail</button> "
+            },
+            { "data": "AssessmentId" },
+            { "data": "HDescription", },
+            { "data": "PermitGroupId" },
+            { "data": "UserId" },
+            { "data": "Area" },
+            { "data": "TermsId" }
+            ],
+            "order": [],
+            "pagingType": "full_numbers"
+            //'fnServerData': function ( sSource, aoData, fnCallback ) {
+            //    alert('121')
+            //}
+        });
+
+
+
+        table.on('click', 'button#btnDetail', function () {
+            var data = table.row($(this).parents('tr')).data();
+            var witdh = $('#table1').width();
+            $(".modal-dialog").width(witdh);
+            _data = data;
+
+            //  if (!_isInitSubGrid) {//判断是否子grid初始化过
+            //未初始化
+            //CreateSubTable();
+            CreateSelect();
+            // $.extend()
+            //_isInitSubGrid = true;
+
+            //初始化过
+            //  $('#subTable').DataTable().ajax.url('@Url.Action("GetSubData", "Home")').load();
+
+            //$('#desc').innerHtml = "HDescription" + data.HDescription;
+            $('#desc').html('<div class="col-lg-12">' + 'HDescription: ' + data.HDescription + '</div>');
+            $("#myModal5").modal("show");
+
+
+          
+
+            if (_isInitSubGrid)
+                $('#subTable').DataTable().clear().draw();
+        });
+
+
+        //$('#table1 tbody').on('click', 'tr', function () {
+        //    if ($(this).hasClass('selected')) {
+        //        $(this).removeClass('selected');
+        //    }
+        //    else {
+        //        table.$('tr.selected').removeClass('selected');
+        //        $(this).addClass('selected');
+        //    }
+        //});
+
+
+
+
+
+    })
+
+
+    function BindSelectParams(ctrlName, url, params) {
+        var control = $('#' + ctrlName);
+        //设置Select2的处理
+        control.select2({
+            allowClear: false,
+            formatResult: function (medata) { },
+            formatSelection: function (medata) {
+                return medata.text;
+            },
+            escapeMarkup: function (m) {
+                return m;
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: params,
+            dataType: "json",
+            success: function (data) {
+                control.empty();
+                control.append("<option value='-1'>&nbsp;</option>");
+                $.each(data, function (i, item) {
+                    control.append("<option value='" + item.id + "'>&nbsp;" + item.text + "</option>");
+                });
+                control.focus();
+            }
+        });
+    }
+
+
+    function CreateSelect() {
+        $("#sTitle").select2();
+        BindSelectParams('sTitle', '@Url.Action("GetArea", "Home")', { AssessmentId: _data.AssessmentId, UserId: _data.UserId });
+        $('#sTitle').on('change', function () {
+            var areaId = $(this).val();
+            $.extend(_data, { AreaId: areaId });
+            if (!_isInitSubGrid) {//判断是否子grid初始化过
+                //未初始化
+                CreateSubTable();
+                _isInitSubGrid = true;
+            }
+            else {
+                //初始化过
+                $('#subTable').DataTable().ajax.url('@Url.Action("GetSubData", "Home")').load();
+            }
+        });
+
+    }
+
+    function checkRate(nubmer) {
+        var re = '/^[0-9]+.?[0-9]*$/'; //判断字符串是否为数字 //判断正整数 /^[1-9]+[0-9]*]*$/
+        // var nubmer = document.getElementById(input).value;
+
+        if (!re.test(nubmer)) {
+            alert("请输入数字");
+            document.getElementById(input).value = "";
+            return false;
+        }
+    }
+
+
+    function CreateSubTable() {
+
+
+        var table = $('#subTable').DataTable({
+            "scrollX": false,
+            "serverSide": false,
+            "processing": true,
+            "autoWidth": false,
+            "pageLength": 10,//首次加载的数据条数
+            "ajax": {
+                "url": '@Url.Action("GetSubData", "Home")',
+                "type": 'POST',
+                "data": function (d) {
+                    d.AssessmentId = _data.AssessmentId;
+                    d.UserId = _data.UserId;
+                    d.areaId = _data.AreaId;
+                }
+            },
+            "columns": [
+            //{
+            //    "className": 'details-control',
+            //    "orderable": false,
+            //    "data": null,
+            //    "defaultContent": ''
+            //},
+            { "data": "title" },
+            { "data": "Id" },
+            { "data": "agentCode" },
+            { "data": "CompanyNameCh" },
+            { "data": "AssessmentId" },
+            { "data": "UserId" },
+            { "data": "Score" },
+            { "data": "Weighting" }
+            ],
+            "columnDefs": [
+            {
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            }],
+            "order": [[0, 'asc']],
+            "pagingType": "full_numbers",
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var rows = api.rows({ page: 'current' }).nodes();
+                var last = null;
+
+                console.log(api.rows({ page: 'current' }).data());
+
+                api.column(0, { page: 'current' }).data().each(function (group, i) {
+
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            '<tr class="group"><td colspan="5">' + group + '</span></td></tr>'
+                        );
+
+                        last = group;
+                    }
+                });
+
+            }
+
+        });
+
+        var _selectData;
+        var _curPageIndex, _curSelectIndex;
+
+        $('#subTable tbody').on('click', 'tr', function () {
+
+            _curPageIndex = table.page();
+            _curSelectIndex = table.row(this).index();
+            //var aaa = table.row(_curSelectIndex).data();
+            //_selectData = table.row({ selected: true }).data();
+
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        $('#subTable tbody').on('dblclick', 'tr', function () {
+
+            //var rows = table.rows().data();
+
+            //if (rows.lenght == 0)
+            //    return;
+
+            swal("Please write your score:", {
+                content: {
+                    element: "input",
+                    attributes: {
+                        type: "text"
+                    }
+                }
+            }).then(function (value) {
+                if (value == undefined || value == null)
+                    return;
+
+                var rr = table.row(_curSelectIndex).node();
+                var row = table.row(_curSelectIndex).data();
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetScore","Home")',
+                    data: { Id: row.Id, Score: value },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.result != "")
+                            swal("", data.result, "warning");
+                        else {
+                            //swal("", "Finished!", "success");
+                            table.cell(_curSelectIndex, 6).data(value).draw(false);
+                            $(rr).addClass('selected');
+                        }
+                    }
+                });
+
+
+
+                //alert(_curPageIndex);
+                //table.page(_curPageIndex).draw(false);
+                //table.row(this).data(_selectData).draw();
+
+            });
+        });
+
+
+        // Order by the grouping
+        $('#subTable tbody').on('click', 'tr.group', function () {
+            var currentOrder = table.order()[0];
+            if (currentOrder[0] === 0 && currentOrder[1] === 'asc') {
+                table.order([0, 'desc']).draw();
+            }
+            else {
+                table.order([0, 'asc']).draw();
+            }
+            // table.order([0, 'desc']).draw();
+
+        });
+
+    }
+
+
+</script>
